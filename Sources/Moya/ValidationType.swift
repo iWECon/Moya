@@ -1,5 +1,10 @@
 import Foundation
 
+public typealias MoyaValidationResult = Result<Void, Error>
+
+public typealias MoyaDataValidation = (URLRequest?, HTTPURLResponse, Data?) -> MoyaValidationResult
+public typealias MoyaDownloadValidation = (URLRequest?, HTTPURLResponse, URL?) -> MoyaValidationResult
+
 /// Represents the status codes to validate through Alamofire.
 public enum ValidationType {
 
@@ -14,6 +19,10 @@ public enum ValidationType {
 
     /// Validate only the given status codes.
     case customCodes([Int])
+    
+    case dataValidation(_ validation: MoyaDataValidation)
+    
+    case downloadValidation(_ validation: MoyaDownloadValidation)
 
     /// The list of HTTP status codes to validate.
     var statusCodes: [Int] {
@@ -24,8 +33,25 @@ public enum ValidationType {
             return Array(200..<400)
         case .customCodes(let codes):
             return codes
-        case .none:
+        case .none, .dataValidation, .downloadValidation:
             return []
+        }
+    }
+    
+    var dataValidation: MoyaDataValidation? {
+        switch self {
+        case .dataValidation(let validation):
+            return validation
+        default:
+            return nil
+        }
+    }
+    var downloadValidation: MoyaDownloadValidation? {
+        switch self {
+        case .downloadValidation(let validation):
+            return validation
+        default:
+            return nil
         }
     }
 }

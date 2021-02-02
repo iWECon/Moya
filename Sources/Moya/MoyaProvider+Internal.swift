@@ -188,7 +188,12 @@ private extension MoyaProvider {
         setup(interceptor: interceptor, with: target, and: request)
 
         let validationCodes = target.validationType.statusCodes
-        let validatedRequest = validationCodes.isEmpty ? request : request.validate(statusCode: validationCodes)
+        var validatedRequest = request
+        if let validation = target.validationType.dataValidation {
+            validatedRequest = request.validate(validation)
+        } else if !validationCodes.isEmpty {
+            validatedRequest = request.validate(statusCode: validationCodes)
+        }
         return sendAlamofireRequest(validatedRequest, target: target, callbackQueue: callbackQueue, progress: progress, completion: completion)
     }
 
@@ -198,7 +203,12 @@ private extension MoyaProvider {
         setup(interceptor: interceptor, with: target, and: uploadRequest)
 
         let validationCodes = target.validationType.statusCodes
-        let alamoRequest = validationCodes.isEmpty ? uploadRequest : uploadRequest.validate(statusCode: validationCodes)
+        var alamoRequest = uploadRequest
+        if let validation = target.validationType.dataValidation {
+            alamoRequest = uploadRequest.validate(validation)
+        } else if !validationCodes.isEmpty {
+            alamoRequest = uploadRequest.validate(statusCode: validationCodes)
+        }
         return sendAlamofireRequest(alamoRequest, target: target, callbackQueue: callbackQueue, progress: progress, completion: completion)
     }
 
@@ -208,7 +218,12 @@ private extension MoyaProvider {
         setup(interceptor: interceptor, with: target, and: downloadRequest)
 
         let validationCodes = target.validationType.statusCodes
-        let alamoRequest = validationCodes.isEmpty ? downloadRequest : downloadRequest.validate(statusCode: validationCodes)
+        var alamoRequest = downloadRequest
+        if let validation = target.validationType.downloadValidation {
+            alamoRequest = downloadRequest.validate(validation)
+        } else if !validationCodes.isEmpty {
+            alamoRequest = downloadRequest.validate(statusCode: validationCodes)
+        }
         return sendAlamofireRequest(alamoRequest, target: target, callbackQueue: callbackQueue, progress: progress, completion: completion)
     }
 
@@ -218,7 +233,12 @@ private extension MoyaProvider {
         setup(interceptor: interceptor, with: target, and: initialRequest)
 
         let validationCodes = target.validationType.statusCodes
-        let alamoRequest = validationCodes.isEmpty ? initialRequest : initialRequest.validate(statusCode: validationCodes)
+        var alamoRequest = initialRequest
+        if let validation = target.validationType.dataValidation {
+            alamoRequest = initialRequest.validate(validation)
+        } else if !validationCodes.isEmpty {
+            alamoRequest = initialRequest.validate(statusCode: validationCodes)
+        }
         return sendAlamofireRequest(alamoRequest, target: target, callbackQueue: callbackQueue, progress: progress, completion: completion)
     }
 
